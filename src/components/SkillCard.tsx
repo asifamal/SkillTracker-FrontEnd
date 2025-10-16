@@ -9,6 +9,7 @@ export type Skill = {
   progress: number
   difficulty: number
   total_hours: number
+  category?: string
 }
 
 const SkillCard: React.FC<{ skill: Skill }> = ({ skill }) => {
@@ -16,7 +17,14 @@ const SkillCard: React.FC<{ skill: Skill }> = ({ skill }) => {
     <Link to={`/skills/${skill.id}`} className="card p-4 block">
       <div className="flex items-start justify-between">
         <h3 className="font-semibold">{skill.name}</h3>
-        <span className="text-xs rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5">{skill.resource_type}</span>
+        <div className="flex flex-col gap-1 items-end">
+          <span className="text-xs rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5">{skill.resource_type}</span>
+          {skill.category && (
+            <span className="text-xs rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5">
+              {skill.category}
+            </span>
+          )}
+        </div>
       </div>
       <div className="mt-3 text-sm text-slate-600 dark:text-slate-300">{skill.platform}</div>
       <div className="mt-3">

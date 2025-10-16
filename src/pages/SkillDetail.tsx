@@ -17,6 +17,7 @@ const mapBackendToSkill = (g: any): Skill => ({
   progress: 0,
   difficulty: g.difficulty_rating ?? 1,
   total_hours: g.hours_spent ?? 0,
+  category: g.category,
 })
 
 const SkillDetail: React.FC = () => {
@@ -90,6 +91,11 @@ const SkillDetail: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
                 {STATUS_LABELS[status] || '—'}
               </span>
+              {skill.category && (
+                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
+                  {skill.category}
+                </span>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-center">

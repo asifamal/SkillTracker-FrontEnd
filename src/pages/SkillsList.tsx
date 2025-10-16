@@ -21,6 +21,7 @@ const mapBackendToSkill = (g: any): UISkill => ({
   difficulty: g.difficulty_rating ?? 1,
   total_hours: g.hours_spent ?? 0,
   status: g.status,
+  category: g.category,
 })
 
 const SkillsList: React.FC = () => {
@@ -28,6 +29,7 @@ const SkillsList: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [progressFilter, setProgressFilter] = useState<string>('all')
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
 
   useEffect(() => {
     let mounted = true
@@ -42,13 +44,27 @@ const SkillsList: React.FC = () => {
 
   const filtered = useMemo(() => {
     return skills.filter((s) => {
-      if (progressFilter === 'all') return true
-      if (progressFilter === 'started') return s.status === 1
-      if (progressFilter === 'in_progress') return s.status === 2
-      if (progressFilter === 'completed') return s.status === 3
+      // Progress filter
+      if (progressFilter !== 'all') {
+        if (progressFilter === 'started' && s.status !== 1) return false
+        if (progressFilter === 'in_progress' && s.status !== 2) return false
+        if (progressFilter === 'completed' && s.status !== 3) return false
+      }
+      
+      // Category filter
+      if (categoryFilter !== 'all') {
+        if (s.category !== categoryFilter) return false
+      }
+      
       return true
     })
-  }, [skills, progressFilter])
+  }, [skills, progressFilter, categoryFilter])
+
+  // Get unique categories for filter dropdown
+  const categories = useMemo(() => {
+    const cats = [...new Set(skills.map(s => s.category).filter(Boolean))]
+    return cats.sort()
+  }, [skills])
 
   const confirmDelete = (id: number) => {
     const tId = toast.custom((_) => (
@@ -98,6 +114,15 @@ const SkillsList: React.FC = () => {
             <option value="started">Started</option>
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <label className="label">Category</label>
+          <select className="input" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+            <option value="all">All Categories</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
         </div>
       </div>
