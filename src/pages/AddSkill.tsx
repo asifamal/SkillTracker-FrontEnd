@@ -29,12 +29,11 @@ const AddSkill: React.FC = () => {
         toast.error('Name is required')
         return
       }
-      // Map to Django SkillGoalCreateView fields
       const payload = {
         skill_name: form.name,
         resource_type: RESOURCE_TYPE_MAP[form.resource_type] ?? 1,
         platform: form.platform,
-        status: 1, // default new
+        status: 1,
         hours_spent: Number(form.estimated_hours) || 0,
         notes: '',
         difficulty_rating: Number(form.difficulty) || 1,

@@ -8,7 +8,6 @@ export const api = axios.create({
   timeout: 10000,
 })
 
-// Mock helpers in case backend is down
 const withFallback = async <T>(fn: () => Promise<T>, fallback: T): Promise<T> => {
   try {
     return await fn()
@@ -59,7 +58,6 @@ export const fetchDashboard = () =>
     }
   )
 
-// Fetch SkillGoal list from Django (SkillGoalListView)
 export const fetchSkillGoals = async (): Promise<any[]> => {
   const res = await api.get('list_skills/')
   if (res.data && res.data.status === 1 && Array.isArray(res.data.data)) {
@@ -68,7 +66,6 @@ export const fetchSkillGoals = async (): Promise<any[]> => {
   return []
 }
 
-// Fetch single SkillGoal detail from Django (SkillGoalDetailView)
 export const fetchSkillGoalDetail = async (id: string | number): Promise<any | null> => {
   const res = await api.get(`skill_detail/${id}/`)
   if (res.data && res.data.status === 1 && res.data.data) {
@@ -83,7 +80,6 @@ export const fetchSkills = (params?: Record<string, string | number>) =>
     []
   )
 
-// Django SkillGoalCreateView expects: skill_name, resource_type (number), platform, status, hours_spent, notes, difficulty_rating
 export const createSkill = (payload: {
   skill_name: string
   resource_type: number
@@ -94,14 +90,11 @@ export const createSkill = (payload: {
   difficulty_rating?: number
 }) => api.post('skill_create/', payload)
 
-// SkillGoalUpdateProgressView (PATCH /skills/update_skill/<id>/)
 export const updateProgress = (id: string | number, payload: Partial<{ status: number; hours_spent: number; notes: string; difficulty_rating: number }>) =>
   api.patch(`update_skill/${id}/`, payload)
 
-// SkillGoalDeleteView (DELETE /skills/delete_skill/<id>/)
 export const deleteSkill = (id: string | number) => api.delete(`delete_skill/${id}/`)
 
-// Timeline endpoints
 export type TimelineParams = { skill?: string | number; from?: string; to?: string }
 export const fetchTimeline = async (params?: TimelineParams) => {
   const res = await api.get('timeline/', { params })

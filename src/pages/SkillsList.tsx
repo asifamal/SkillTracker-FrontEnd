@@ -17,7 +17,7 @@ const mapBackendToSkill = (g: any): UISkill => ({
       ? (RESOURCE_LABELS[g.resource_type] || String(g.resource_type))
       : g.resource_type || '—',
   platform: g.platform || '—',
-  progress: 0, // percent not provided by backend
+  progress: 0,
   difficulty: g.difficulty_rating ?? 1,
   total_hours: g.hours_spent ?? 0,
   status: g.status,
@@ -44,14 +44,12 @@ const SkillsList: React.FC = () => {
 
   const filtered = useMemo(() => {
     return skills.filter((s) => {
-      // Progress filter
       if (progressFilter !== 'all') {
         if (progressFilter === 'started' && s.status !== 1) return false
         if (progressFilter === 'in_progress' && s.status !== 2) return false
         if (progressFilter === 'completed' && s.status !== 3) return false
       }
       
-      // Category filter
       if (categoryFilter !== 'all') {
         if (s.category !== categoryFilter) return false
       }
@@ -60,7 +58,6 @@ const SkillsList: React.FC = () => {
     })
   }, [skills, progressFilter, categoryFilter])
 
-  // Get unique categories for filter dropdown
   const categories = useMemo(() => {
     const cats = [...new Set(skills.map(s => s.category).filter(Boolean))]
     return cats.sort()
