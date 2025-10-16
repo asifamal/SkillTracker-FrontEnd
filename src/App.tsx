@@ -6,7 +6,6 @@ import Dashboard from './pages/Dashboard'
 import SkillsList from './pages/SkillsList'
 import AddSkill from './pages/AddSkill'
 import SkillDetail from './pages/SkillDetail'
-import Tags from './pages/Tags'
 
 const App: React.FC = () => {
   return (
@@ -21,7 +20,6 @@ const App: React.FC = () => {
             <Route path="/skills" element={<SkillsList />} />
             <Route path="/skills/add" element={<AddSkill />} />
             <Route path="/skills/:id" element={<SkillDetail />} />
-            <Route path="/tags" element={<Tags />} />
             <Route path="*" element={<div className="text-sm text-slate-500">Not Found</div>} />
           </Routes>
         </main>

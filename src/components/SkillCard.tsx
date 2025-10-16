@@ -9,7 +9,6 @@ export type Skill = {
   progress: number
   difficulty: number
   total_hours: number
-  tags?: string[]
 }
 
 const SkillCard: React.FC<{ skill: Skill }> = ({ skill }) => {
@@ -33,15 +32,6 @@ const SkillCard: React.FC<{ skill: Skill }> = ({ skill }) => {
         <span>Difficulty: {skill.difficulty}/5</span>
         <span>Total: {skill.total_hours} hrs</span>
       </div>
-      {skill.tags?.length ? (
-        <div className="mt-3 flex flex-wrap gap-1">
-          {skill.tags.map((t) => (
-            <span key={t} className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-              #{t}
-            </span>
-          ))}
-        </div>
-      ) : null}
     </Link>
   )
 }

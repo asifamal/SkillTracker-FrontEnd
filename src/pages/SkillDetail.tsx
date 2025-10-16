@@ -1,29 +1,48 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { addSession, fetchSkills, updateProgress } from '../services/api'
+import { useParams, useNavigate } from 'react-router-dom'
+import { fetchSkillGoalDetail, updateProgress } from '../services/api'
 import Loader from '../components/Loader'
 import toast, { Toaster } from 'react-hot-toast'
 import type { Skill } from '../components/SkillCard'
 
+const RESOURCE_LABELS: Record<number, string> = { 1: 'Video', 2: 'Course', 3: 'Article' }
+const STATUS_LABELS: Record<number, string> = { 1: 'Started', 2: 'In Progress', 3: 'Completed' }
+
+const mapBackendToSkill = (g: any): Skill => ({
+  id: g.id,
+  name: g.skill_name,
+  resource_type: typeof g.resource_type === 'number' ? (RESOURCE_LABELS[g.resource_type] || String(g.resource_type)) : g.resource_type || '—',
+  platform: g.platform || '—',
+  progress: 0,
+  difficulty: g.difficulty_rating ?? 1,
+  total_hours: g.hours_spent ?? 0,
+})
+
 const SkillDetail: React.FC = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [skill, setSkill] = useState<Skill | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [progress, setProgress] = useState<number>(0)
-  const [session, setSession] = useState({ date: '', duration_hours: 1, notes: '' })
+  const [status, setStatus] = useState<number>(1)
+  const [hoursSpent, setHoursSpent] = useState<number>(0)
+  const [notes, setNotes] = useState<string>('')
+  const [difficulty, setDifficulty] = useState<number>(1)
 
   useEffect(() => {
     let mounted = true
-    fetchSkills()
-      .then((list) => {
-        const found = list.find((s: any) => String(s.id) === String(id)) || null
-        if (mounted) {
-          setSkill(found)
-          setProgress(found?.progress ?? 0)
-        }
+    if (!id) return
+    fetchSkillGoalDetail(id)
+      .then((data) => {
+        if (!mounted || !data) return
+        const mapped = mapBackendToSkill(data)
+        setSkill(mapped)
+        setStatus(data.status ?? 1)
+        setHoursSpent(data.hours_spent ?? 0)
+        setNotes(data.notes ?? '')
+        setDifficulty(data.difficulty_rating ?? 1)
       })
       .catch((e) => setError(String(e)))
       .finally(() => mounted && setLoading(false))
@@ -35,26 +54,16 @@ const SkillDetail: React.FC = () => {
   const onUpdateProgress = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await updateProgress(id!, { progress: Number(progress) })
-      toast.success('Progress updated')
-      setSkill((s) => (s ? { ...s, progress: Number(progress) } : s))
+      await updateProgress(id!, {
+        status: Number(status),
+        hours_spent: Number(hoursSpent),
+        notes,
+        difficulty_rating: Number(difficulty),
+      })
+      toast.success('Updated')
+      navigate('/skills')
     } catch (err: any) {
       toast.error(err?.message || 'Failed to update')
-    }
-  }
-
-  const onAddSession = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      await addSession(id!, {
-        date: session.date,
-        duration_hours: Number(session.duration_hours),
-        notes: session.notes,
-      })
-      toast.success('Session added')
-      setSession({ date: '', duration_hours: 1, notes: '' })
-    } catch (err: any) {
-      toast.error(err?.message || 'Failed to add session')
     }
   }
 
@@ -65,49 +74,89 @@ const SkillDetail: React.FC = () => {
   return (
     <div className="space-y-6">
       <Toaster />
-      <div className="card p-4">
-        <div className="flex items-start justify-between">
+
+      {/* Header Card */}
+      <div className="card p-5">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold">{skill.name}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              {skill.resource_type} • {skill.platform} • Difficulty {skill.difficulty}/5
+            <h2 className="text-2xl font-semibold tracking-tight">{skill.name}</h2>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+              <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
+                {skill.resource_type}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60">
+                {skill.platform}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                {STATUS_LABELS[status] || '—'}
+              </span>
             </div>
           </div>
-          <div className="text-sm text-slate-500">Total {skill.total_hours} hrs</div>
-        </div>
-
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-sm">
-            <span>Progress</span>
-            <span>{skill.progress}%</span>
-          </div>
-          <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-1">
-            <div className="h-2 bg-indigo-600 rounded-full" style={{ width: `${skill.progress}%` }} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-center">
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+              <div className="text-xs text-slate-500">Hours</div>
+              <div className="text-lg font-semibold">{skill.total_hours}</div>
+            </div>
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+              <div className="text-xs text-slate-500">Difficulty</div>
+              <div className="text-lg font-semibold">{skill.difficulty}/5</div>
+            </div>
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3 col-span-2 md:col-span-1">
+              <div className="text-xs text-slate-500">ID</div>
+              <div className="text-lg font-semibold">{skill.id}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <form onSubmit={onUpdateProgress} className="card p-4 space-y-3">
-          <h3 className="font-semibold">Update Progress</h3>
-          <input type="number" min={0} max={100} className="input" value={progress} onChange={(e) => setProgress(Number(e.target.value))} />
-          <button className="btn-primary">Save</button>
+      {/* Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <form onSubmit={onUpdateProgress} className="card p-5 lg:col-span-2 space-y-4">
+          <h3 className="text-lg font-semibold">Update Skill</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Status</label>
+              <select className="input" value={status} onChange={(e) => setStatus(Number(e.target.value))}>
+                <option value={1}>Started</option>
+                <option value={2}>In Progress</option>
+                <option value={3}>Completed</option>
+              </select>
+            </div>
+            <div>
+              <label className="label">Hours Spent</label>
+              <input type="number" min={0} className="input" value={hoursSpent} onChange={(e) => setHoursSpent(Number(e.target.value))} />
+            </div>
+            <div>
+              <label className="label">Difficulty (1-5)</label>
+              <input type="number" min={1} max={5} className="input" value={difficulty} onChange={(e) => setDifficulty(Number(e.target.value))} />
+            </div>
+            <div className="md:col-span-2">
+              <label className="label">Notes</label>
+              <textarea className="input" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
+            </div>
+          </div>
+          <div className="pt-2">
+            <button className="btn-primary">Save Changes</button>
+          </div>
         </form>
 
-        <form onSubmit={onAddSession} className="card p-4 space-y-3">
-          <h3 className="font-semibold">Add Learning Session</h3>
-          <input type="date" className="input" value={session.date} onChange={(e) => setSession({ ...session, date: e.target.value })} />
-          <input
-            type="number"
-            min={0}
-            className="input"
-            value={session.duration_hours}
-            onChange={(e) => setSession({ ...session, duration_hours: Number(e.target.value) })}
-            placeholder="Hours"
-          />
-          <textarea className="input" rows={4} placeholder="Notes" value={session.notes} onChange={(e) => setSession({ ...session, notes: e.target.value })} />
-          <button className="btn-primary">Add Session</button>
-        </form>
+        <div className="card p-5 space-y-3">
+          <h3 className="text-lg font-semibold">Summary</h3>
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            <div className="flex items-center justify-between py-1">
+              <span>Current Status</span>
+              <span className="font-medium">{STATUS_LABELS[status] || '—'}</span>
+            </div>
+            <div className="flex items-center justify-between py-1">
+              <span>Hours Spent</span>
+              <span className="font-medium">{hoursSpent}</span>
+            </div>
+            <div className="flex items-center justify-between py-1">
+              <span>Difficulty</span>
+              <span className="font-medium">{difficulty}/5</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

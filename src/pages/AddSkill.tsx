@@ -19,13 +19,16 @@ const AddSkill: React.FC = () => {
     platform: '',
     difficulty: 3,
     estimated_hours: 0,
-    tags: '',
   })
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
     try {
+      if (!form.name.trim()) {
+        toast.error('Name is required')
+        return
+      }
       // Map to Django SkillGoalCreateView fields
       const payload = {
         skill_name: form.name,
@@ -56,43 +59,47 @@ const AddSkill: React.FC = () => {
   return (
     <div>
       <Toaster />
-      <form onSubmit={onSubmit} className="card p-4 space-y-4 max-w-2xl">
-        <div>
-          <label className="label">Name</label>
-          <input className="input" value={form.name} onChange={(e) => set('name', e.target.value)} required />
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold">Add Skill</h2>
+          <p className="text-sm text-slate-500">Create a new learning goal</p>
         </div>
-        <div>
-          <label className="label">Resource Type</label>
-          <select className="input" value={form.resource_type} onChange={(e) => set('resource_type', e.target.value)}>
-            {['video', 'course', 'article', 'book', 'other'].map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label">Platform</label>
-          <input className="input" value={form.platform} onChange={(e) => set('platform', e.target.value)} />
-        </div>
-        <div>
-          <label className="label">Difficulty (1-5)</label>
-          <input type="number" min={1} max={5} className="input" value={form.difficulty} onChange={(e) => set('difficulty', e.target.value)} />
-        </div>
-        <div>
-          <label className="label">Estimated Hours</label>
-          <input type="number" min={0} className="input" value={form.estimated_hours} onChange={(e) => set('estimated_hours', e.target.value)} />
-        </div>
-        <div>
-          <label className="label">Tags (ignored for backend)</label>
-          <input className="input" value={form.tags} onChange={(e) => set('tags', e.target.value)} />
-        </div>
-        <div className="pt-2">
-          <button className="btn-primary" disabled={submitting}>
-            {submitting ? 'Submitting...' : 'Add Skill'}
-          </button>
-        </div>
-      </form>
+        <form onSubmit={onSubmit} className="card p-5 space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Name</label>
+              <input className="input" value={form.name} onChange={(e) => set('name', e.target.value)} required />
+            </div>
+            <div>
+              <label className="label">Resource Type</label>
+              <select className="input" value={form.resource_type} onChange={(e) => set('resource_type', e.target.value)}>
+                {['video', 'course', 'article'].map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="label">Platform</label>
+              <input className="input" value={form.platform} onChange={(e) => set('platform', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Difficulty (1-5)</label>
+              <input type="number" min={1} max={5} className="input" value={form.difficulty} onChange={(e) => set('difficulty', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Estimated Hours</label>
+              <input type="number" min={0} className="input" value={form.estimated_hours} onChange={(e) => set('estimated_hours', e.target.value)} />
+            </div>
+          </div>
+          <div className="flex items-center justify-end pt-2">
+            <button className="btn-primary" disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Add Skill'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

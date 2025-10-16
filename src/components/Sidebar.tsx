@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { FiHome, FiList, FiPlusCircle, FiTag } from 'react-icons/fi'
+import { FiHome, FiList, FiPlusCircle } from 'react-icons/fi'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-slate-100 dark:hover:bg-slate-800 ${
@@ -15,14 +15,11 @@ const Sidebar: React.FC = () => {
           <NavLink to="/dashboard" className={linkClass}>
             <FiHome /> <span>Dashboard</span>
           </NavLink>
-          <NavLink to="/skills" className={linkClass}>
+          <NavLink to="/skills" end className={linkClass}>
             <FiList /> <span>Skills</span>
           </NavLink>
           <NavLink to="/skills/add" className={linkClass}>
             <FiPlusCircle /> <span>Add Skill</span>
-          </NavLink>
-          <NavLink to="/tags" className={linkClass}>
-            <FiTag /> <span>Tags</span>
           </NavLink>
         </nav>
       </div>
