@@ -21,6 +21,9 @@ const Sidebar: React.FC = () => {
           <NavLink to="/skills/add" className={linkClass}>
             <FiPlusCircle /> <span>Add Skill</span>
           </NavLink>
+          <NavLink to="/timeline" className={linkClass}>
+            <span className="w-4 h-4 rounded bg-slate-300 dark:bg-slate-600 inline-block" /> <span>Timeline</span>
+          </NavLink>
         </nav>
       </div>
     </aside>

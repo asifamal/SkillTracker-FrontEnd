@@ -101,6 +101,16 @@ export const updateProgress = (id: string | number, payload: Partial<{ status: n
 // SkillGoalDeleteView (DELETE /skills/delete_skill/<id>/)
 export const deleteSkill = (id: string | number) => api.delete(`delete_skill/${id}/`)
 
+// Timeline endpoints
+export type TimelineParams = { skill?: string | number; from?: string; to?: string }
+export const fetchTimeline = async (params?: TimelineParams) => {
+  const res = await api.get('timeline/', { params })
+  if (res.data && res.data.status === 1) return res.data.data as any[]
+  return []
+}
+export const createActivity = (payload: { skill_id: number; date: string; title: string; hours?: number; notes?: string }) =>
+  api.post('timeline/', payload)
+
 export const addSession = (id: string | number, payload: any) =>
   api.post(`skills/${id}/sessions/add/`, payload)
 
