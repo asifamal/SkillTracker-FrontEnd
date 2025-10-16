@@ -12,9 +12,9 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <Navbar />
-        <main className="container-page">
+        <main className="container-page flex-1 overflow-x-hidden">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -22,7 +22,7 @@ const App: React.FC = () => {
             <Route path="/skills/add" element={<AddSkill />} />
             <Route path="/skills/:id" element={<SkillDetail />} />
             <Route path="/timeline" element={<Timeline />} />
-            <Route path="*" element={<div className="text-sm text-slate-500">Not Found</div>} />
+            <Route path="*" element={<div className="text-sm text-slate-500 p-4">Not Found</div>} />
           </Routes>
         </main>
       </div>

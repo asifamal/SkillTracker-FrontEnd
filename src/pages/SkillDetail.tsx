@@ -73,15 +73,14 @@ const SkillDetail: React.FC = () => {
   if (!skill) return <div className="text-slate-500">Skill not found</div>
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 p-4 md:p-0">
       <Toaster />
 
-      {/* Header Card */}
-      <div className="card p-5">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="card p-4 md:p-5">
+        <div className="flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">{skill.name}</h2>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{skill.name}</h2>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs md:text-sm">
               <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
                 {skill.resource_type}
               </span>
@@ -98,57 +97,56 @@ const SkillDetail: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-center">
-            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+          <div className="grid grid-cols-3 gap-2 md:gap-3 text-center">
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-2 md:p-3">
               <div className="text-xs text-slate-500">Hours</div>
-              <div className="text-lg font-semibold">{skill.total_hours}</div>
+              <div className="text-sm md:text-lg font-semibold">{skill.total_hours}</div>
             </div>
-            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-2 md:p-3">
               <div className="text-xs text-slate-500">Difficulty</div>
-              <div className="text-lg font-semibold">{skill.difficulty}/5</div>
+              <div className="text-sm md:text-lg font-semibold">{skill.difficulty}/5</div>
             </div>
-            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3 col-span-2 md:col-span-1">
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-2 md:p-3">
               <div className="text-xs text-slate-500">ID</div>
-              <div className="text-lg font-semibold">{skill.id}</div>
+              <div className="text-sm md:text-lg font-semibold">{skill.id}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <form onSubmit={onUpdateProgress} className="card p-5 lg:col-span-2 space-y-4">
-          <h3 className="text-lg font-semibold">Update Skill</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={onUpdateProgress} className="card p-4 md:p-5 lg:col-span-2 space-y-4">
+          <h3 className="text-base md:text-lg font-semibold">Update Skill</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             <div>
-              <label className="label">Status</label>
-              <select className="input" value={status} onChange={(e) => setStatus(Number(e.target.value))}>
+              <label className="label text-sm">Status</label>
+              <select className="input text-sm" value={status} onChange={(e) => setStatus(Number(e.target.value))}>
                 <option value={1}>Started</option>
                 <option value={2}>In Progress</option>
                 <option value={3}>Completed</option>
               </select>
             </div>
             <div>
-              <label className="label">Hours Spent</label>
-              <input type="number" min={0} className="input" value={hoursSpent} onChange={(e) => setHoursSpent(Number(e.target.value))} />
+              <label className="label text-sm">Hours Spent</label>
+              <input type="number" min={0} className="input text-sm" value={hoursSpent} onChange={(e) => setHoursSpent(Number(e.target.value))} />
             </div>
             <div>
-              <label className="label">Difficulty (1-5)</label>
-              <input type="number" min={1} max={5} className="input" value={difficulty} onChange={(e) => setDifficulty(Number(e.target.value))} />
+              <label className="label text-sm">Difficulty (1-5)</label>
+              <input type="number" min={1} max={5} className="input text-sm" value={difficulty} onChange={(e) => setDifficulty(Number(e.target.value))} />
             </div>
-            <div className="md:col-span-2">
-              <label className="label">Notes</label>
-              <textarea className="input" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <div className="sm:col-span-2">
+              <label className="label text-sm">Notes</label>
+              <textarea className="input text-sm" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
           </div>
           <div className="pt-2">
-            <button className="btn-primary">Save Changes</button>
+            <button className="btn-primary w-full sm:w-auto text-sm">Save Changes</button>
           </div>
         </form>
 
-        <div className="card p-5 space-y-3">
-          <h3 className="text-lg font-semibold">Summary</h3>
-          <div className="text-sm text-slate-600 dark:text-slate-300">
+        <div className="card p-4 md:p-5 space-y-3">
+          <h3 className="text-base md:text-lg font-semibold">Summary</h3>
+          <div className="text-xs md:text-sm text-slate-600 dark:text-slate-300 space-y-2">
             <div className="flex items-center justify-between py-1">
               <span>Current Status</span>
               <span className="font-medium">{STATUS_LABELS[status] || '—'}</span>

@@ -10,19 +10,38 @@ const ProgressChart: React.FC<{ data: Record<string, number> }> = ({ data }) => 
   const colors = ['#6366f1', '#22d3ee', '#34d399', '#f59e0b', '#ef4444']
 
   return (
-    <div className="card p-4">
-      <h3 className="font-semibold mb-3">Progress Breakdown</h3>
-      <Pie
-        data={{
-          labels,
-          datasets: [
-            {
-              data: values,
-              backgroundColor: labels.map((_, i) => colors[i % colors.length]),
-            },
-          ],
-        }}
-      />
+    <div className="card p-4 h-full">
+      <h3 className="font-semibold mb-3 text-sm md:text-base">Progress Breakdown</h3>
+      <div className="h-64 md:h-80">
+        <Pie
+          data={{
+            labels,
+            datasets: [
+              {
+                data: values,
+                backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                borderWidth: 0,
+              },
+            ],
+          }}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 15,
+                  usePointStyle: true,
+                  font: {
+                    size: 12
+                  }
+                }
+              }
+            }
+          }}
+        />
+      </div>
     </div>
   )
 }

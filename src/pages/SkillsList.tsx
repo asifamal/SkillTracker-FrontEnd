@@ -101,35 +101,37 @@ const SkillsList: React.FC = () => {
   if (error) return <div className="text-red-600">{error}</div>
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4 md:p-0">
       <Toaster />
-      <div className="card p-4 flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <label className="label">Progress</label>
-          <select className="input" value={progressFilter} onChange={(e) => setProgressFilter(e.target.value)}>
-            <option value="all">All</option>
-            <option value="started">Started</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <label className="label">Category</label>
-          <select className="input" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-            <option value="all">All Categories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+      <div className="card p-3 md:p-4 space-y-3 md:space-y-0 md:flex md:flex-row md:gap-3 md:items-center md:justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="label text-sm">Progress</label>
+            <select className="input text-sm" value={progressFilter} onChange={(e) => setProgressFilter(e.target.value)}>
+              <option value="all">All</option>
+              <option value="started">Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="label text-sm">Category</label>
+            <select className="input text-sm" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+              <option value="all">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="grid-cards">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
         {filtered.map((s) => (
           <div key={s.id} className="relative group">
             <button
               onClick={() => confirmDelete(s.id)}
-              className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-xs px-2 py-1 rounded bg-red-600 text-white"
+              className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition text-xs px-2 py-1 rounded bg-red-600 text-white z-10"
             >
               Delete
             </button>
