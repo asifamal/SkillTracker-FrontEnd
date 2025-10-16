@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_BASE_URL = 'http://localhost:8000/api/'
+export const API_BASE_URL = 'http://localhost:8000/skills/'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -61,7 +61,17 @@ export const fetchSkills = (params?: Record<string, string | number>) =>
     ]
   )
 
-export const createSkill = (payload: any) => api.post('skills/create/', payload)
+// Django SkillGoalCreateView expects: skill_name, resource_type, platform, status, hours_spent, notes, difficulty_rating
+export const createSkill = (payload: {
+  skill_name: string
+  resource_type: string
+  platform: string
+  status?: number
+  hours_spent?: number
+  notes?: string
+  difficulty_rating?: number
+}) => api.post('skill_create/', payload)
+
 export const updateProgress = (id: string | number, payload: any) =>
   api.post(`skills/${id}/update_progress/`, payload)
 export const addSession = (id: string | number, payload: any) =>

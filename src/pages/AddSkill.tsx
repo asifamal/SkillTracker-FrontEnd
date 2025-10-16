@@ -4,6 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { createSkill } from '../services/api'
 import toast, { Toaster } from 'react-hot-toast'
 
+const RESOURCE_TYPE_MAP: Record<string, number> = {
+  video: 1,
+  course: 2,
+  article: 3,
+}
+
 const AddSkill: React.FC = () => {
   const navigate = useNavigate()
   const [submitting, setSubmitting] = useState(false)
@@ -20,20 +26,24 @@ const AddSkill: React.FC = () => {
     e.preventDefault()
     setSubmitting(true)
     try {
+      // Map to Django SkillGoalCreateView fields
       const payload = {
-        name: form.name,
-        resource_type: form.resource_type,
+        skill_name: form.name,
+        resource_type: RESOURCE_TYPE_MAP[form.resource_type] ?? 1,
         platform: form.platform,
-        difficulty: Number(form.difficulty),
-        estimated_hours: Number(form.estimated_hours),
-        tags: form.tags
-          .split(',')
-          .map((t) => t.trim())
-          .filter(Boolean),
+        status: 1, // default new
+        hours_spent: Number(form.estimated_hours) || 0,
+        notes: '',
+        difficulty_rating: Number(form.difficulty) || 1,
       }
-      await createSkill(payload)
-      toast.success('Skill created')
-      navigate('/skills')
+      const res = await createSkill(payload)
+      const ok = (res as any)?.data?.status === 1
+      if (ok) {
+        toast.success('Skill created')
+        navigate('/skills')
+      } else {
+        toast.error('Failed to create')
+      }
     } catch (err: any) {
       toast.error(err?.message || 'Failed to create')
     } finally {
@@ -74,7 +84,7 @@ const AddSkill: React.FC = () => {
           <input type="number" min={0} className="input" value={form.estimated_hours} onChange={(e) => set('estimated_hours', e.target.value)} />
         </div>
         <div>
-          <label className="label">Tags (comma-separated)</label>
+          <label className="label">Tags (ignored for backend)</label>
           <input className="input" value={form.tags} onChange={(e) => set('tags', e.target.value)} />
         </div>
         <div className="pt-2">
