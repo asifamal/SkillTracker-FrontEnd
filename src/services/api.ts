@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_BASE_URL = 'http://localhost:8000/skills/'
+export const API_BASE_URL = 'https://skilltracker-backend-vlq8.onrender.com/skills/'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
